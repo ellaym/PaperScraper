@@ -1,0 +1,3 @@
+[submodule "libs/GPTService"]
+	path = libs/GPTService
+	url = https://github.com/ellaym/GPTService/tree/main
