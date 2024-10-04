@@ -1,0 +1,6 @@
+[submodule "libs/GPTService"]
+	path = libs/GPTService
+	url = https://github.com/ellaym/GPTService/tree/main
+[submodule "libs/EmailService"]
+	path = libs/EmailService
+	url = https://github.com/ellaym/EmailService/tree/develop
