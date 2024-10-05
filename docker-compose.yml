@@ -1,0 +1,59 @@
+version: '3'
+services:
+  
+  # PaperScraper service
+  paper_scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile  # Use the Dockerfile in the root of the project
+    ports:
+      - "5000:5000"  # Expose port for PaperScraper if necessary (optional)
+    depends_on:
+      - email_service
+      - gpt_service
+      - paper_retrieval_service
+    volumes:
+      - shared_data:/app/shared_data  # Mount the shared volume
+    networks:
+      - paperscraper-network
+
+  # EmailService service
+  email_service:
+    build:
+      context: ./services/EmailService
+      dockerfile: Dockerfile  # Use the Dockerfile specific to EmailService
+    ports:
+      - "5501:5501"
+    networks:
+      - paperscraper-network
+
+  # GPTService service
+  gpt_service:
+    build:
+      context: ./services/GPTService
+      dockerfile: Dockerfile  # Use the Dockerfile specific to GPTService
+    ports:
+      - "5500:5500"
+    networks:
+      - paperscraper-network
+
+  # PaperRetrievalService service
+  paper_retrieval_service:
+    build:
+      context: ./services/PaperRetrievalService
+      dockerfile: Dockerfile  # Use the Dockerfile specific to PaperRetrievalService
+    ports:
+      - "5502:5502"
+    volumes:
+      - shared_data:/app/shared_data  # Mount the shared volume
+    networks:
+      - paperscraper-network
+
+# Create a shared network for the services
+networks:
+  paperscraper-network:
+    driver: bridge
+
+# Define the shared volume
+volumes:
+  shared_data:
