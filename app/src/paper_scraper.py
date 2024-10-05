@@ -34,12 +34,13 @@ PAPER_RETRIEVAL_MICROSERVICE_URL = (
 EMAIL_RECIPIENT = cfg["email_recipient"]
 RELEVANCE_QUERY = cfg["relevance_query"]
 SUMMARY_QUERY = cfg["summary_query"]
-SEARCH_QUERY = cfg["search_query"]
+FIELDS_TO_SEARCH = cfg["fields_to_search"]
 OUTPUT_DIR = cfg["output_dir"]
+RELEVANCE_PREFIX = cfg["relevance_prefix"]
 
 
 # Function to query GPT microservice
-def query_gpt(content, retries=100, timeout=20):
+def query_gpt(content, retries=100, timeout=100):
     """Function to send a query to the GPT microservice with retries and a timeout."""
     payload = {"query": content}
     for attempt in range(retries):
@@ -61,7 +62,7 @@ def send_email_via_microservice(to_email, subject, message):
     """Function to send an email via the email microservice with error handling."""
     payload = {"email": to_email, "subject": subject, "message": message}
     try:
-        response = requests.post(EMAIL_MICROSERVICE_URL, json=payload, timeout=10)
+        response = requests.post(EMAIL_MICROSERVICE_URL, json=payload, timeout=50)
         response.raise_for_status()
         logging.info(f"Email sent successfully to {to_email}")
     except requests.exceptions.RequestException as e:
@@ -93,10 +94,9 @@ def process_paper(found_paper: FoundPaper):
         logging.warning(f"Skipping paper '{found_paper.title}' due to no GPT response.")
         return None
 
-    # TODO: find a better logic for relevance (based on GPT query)
-    # if "relevant" not in gpt_relevance_response.lower():
-    #    logging.warning(f"Skipping paper '{found_paper.title}' since GPT decided it's not relevant.")
-    #    return None
+    if not gpt_relevance_response.lower().startswith(RELEVANCE_PREFIX):
+       logging.warning(f"Skipping paper '{found_paper.title}' since GPT decided it's not relevant.")
+       return None
 
     # 2. Extract the entire PDF content
     paper_text = extract_text_from_pdf(found_paper.pdf_path)
@@ -124,10 +124,10 @@ def process_paper(found_paper: FoundPaper):
 
 
 # Function to interact with the PaperRetrievalService microservice
-def call_paper_retrieval_microservice(start_date, end_date, retries=100, timeout=10):
+def call_paper_retrieval_microservice(start_date, end_date, retries=100, timeout=50):
     """Call the PaperRetrievalService microservice to retrieve papers."""
     payload = {
-        "search_query": SEARCH_QUERY,
+        "fields_to_search": FIELDS_TO_SEARCH,
         "output_dir": OUTPUT_DIR,
         "start_date": start_date,
         "end_date": end_date,
