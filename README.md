@@ -77,7 +77,7 @@ http://localhost:5502/retrieve_papers
 **Example request** (via `curl`):
 ```bash
 curl -X POST http://localhost:5502/retrieve_papers   -H "Content-Type: application/json"   -d '{
-        "search_query": "cat:cs.CR OR cat:cs.DS",
+        "fields_to_search": "[\"algorithms\"]",
         "output_dir": "./shared_data",
         "start_date": "2023-01-01",
         "end_date": "2023-12-31"
