@@ -1,6 +1,9 @@
-[submodule "libs/GPTService"]
-	path = libs/GPTService
+[submodule "services/GPTService"]
+	path = services/GPTService
 	url = https://github.com/ellaym/GPTService/tree/main
-[submodule "libs/EmailService"]
-	path = libs/EmailService
+[submodule "services/EmailService"]
+	path = services/EmailService
 	url = https://github.com/ellaym/EmailService/tree/develop
+[submodule "services/PaperRetrievalService"]
+	path = services/PaperRetrievalService
+	url = https://github.com/ellaym/PaperRetrievalService
